@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Transcript' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Ticket #' + ticket.id + ' Transcript', pageSub: ticket.username }) %>
+    <div class="content">
+      <div class="panel">
+        <% if (!transcript) { %>
+          <div class="empty-state"><h3>No transcript saved</h3><p>Transcripts are only saved if enabled in Settings and the ticket has since been closed.</p></div>
+        <% } else { %>
+          <pre class="mono" style="white-space: pre-wrap; font-size: 12.5px; line-height: 1.6; max-height: 70vh; overflow-y: auto;"><%= transcript.content %></pre>
+        <% } %>
+      </div>
+      <a href="/tickets" class="btn">← Back to ticket log</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

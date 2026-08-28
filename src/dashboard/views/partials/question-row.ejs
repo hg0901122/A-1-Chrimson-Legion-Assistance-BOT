@@ -1,0 +1,30 @@
+<div class="question-card">
+  <button type="button" class="remove-q" title="Remove question">✕ remove</button>
+  <div class="q-num">Question <%= typeof i === 'number' ? i + 1 : '' %></div>
+  <div class="field-row">
+    <div class="field">
+      <label>Question label</label>
+      <input type="text" name="q_label" value="<%= q.label %>" placeholder="e.g. Why do you want to join?" maxlength="45" />
+    </div>
+    <div class="field">
+      <label>Answer style</label>
+      <select name="q_style">
+        <option value="short" <%= q.style !== 'paragraph' ? 'selected' : '' %>>Short answer</option>
+        <option value="paragraph" <%= q.style === 'paragraph' ? 'selected' : '' %>>Paragraph</option>
+      </select>
+    </div>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label>Placeholder text <span class="hint">(optional)</span></label>
+      <input type="text" name="q_placeholder" value="<%= q.placeholder || '' %>" maxlength="100" />
+    </div>
+    <div class="field">
+      <label>Required?</label>
+      <select name="q_required">
+        <option value="true" <%= q.required !== false ? 'selected' : '' %>>Yes</option>
+        <option value="false" <%= q.required === false ? 'selected' : '' %>>No</option>
+      </select>
+    </div>
+  </div>
+</div>

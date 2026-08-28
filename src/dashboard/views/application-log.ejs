@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Application Log' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Application Log', pageSub: 'Full history of every submission, every attempt' }) %>
+    <div class="content">
+
+      <form class="filters" method="get" action="/applications/log">
+        <div class="field">
+          <label for="type">Application</label>
+          <select name="type" id="type" onchange="this.form.submit()">
+            <option value="">All</option>
+            <% types.forEach(t => { %>
+              <option value="<%= t.id %>" <%= String(filterType) === String(t.id) ? 'selected' : '' %>><%= t.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status">Status</label>
+          <select name="status" id="status" onchange="this.form.submit()">
+            <option value="">All</option>
+            <option value="pending" <%= filterStatus === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="accepted" <%= filterStatus === 'accepted' ? 'selected' : '' %>>Accepted</option>
+            <option value="denied" <%= filterStatus === 'denied' ? 'selected' : '' %>>Denied</option>
+          </select>
+        </div>
+      </form>
+
+      <div class="panel">
+        <table class="ledger">
+          <thead><tr><th>ID</th><th>Application</th><th>Applicant</th><th>Attempt</th><th>Status</th><th>Submitted</th><th>Reviewed by</th></tr></thead>
+          <tbody>
+            <% if (apps.length === 0) { %>
+              <tr class="empty-row"><td colspan="7">No applications match these filters.</td></tr>
+            <% } %>
+            <% apps.forEach(a => { %>
+              <% const t = typesById[a.application_type_id]; %>
+              <tr>
+                <td class="mono">#<%= a.id %></td>
+                <td><%= t ? t.name : 'Unknown' %></td>
+                <td><%= a.username %></td>
+                <td class="mono">#<%= a.attempt_number %></td>
+                <td><span class="stamp stamp-<%= a.status %>"><%= a.status %></span></td>
+                <td class="mono"><%= new Date(a.created_at).toLocaleString() %></td>
+                <td><%= a.reviewed_by || '—' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= appType.name %> — Warden</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="portal-body">
+  <div class="portal-shell portal-shell-wide">
+    <div class="portal-card">
+      <div class="portal-icon">📝</div>
+      <h1><%= appType.name %></h1>
+      <% if (appType.description) { %><p class="portal-text"><%= appType.description %></p><% } %>
+      <div class="badge-pill" style="margin-bottom:18px;">This will be attempt #<%= attemptNumber %></div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="portal-error"><%= error %></div>
+      <% } %>
+
+      <form method="post" action="/apply/<%= session.token %>/submit" class="portal-form">
+        <% appType.questions.forEach((q, i) => { %>
+          <div class="field">
+            <label for="q_<%= i %>"><%= q.label %><% if (q.required !== false) { %> <span class="req">*</span><% } %></label>
+            <% if (q.style === 'paragraph') { %>
+              <textarea id="q_<%= i %>" name="q_<%= i %>" rows="4" placeholder="<%= q.placeholder || '' %>" <%= q.required !== false ? 'required' : '' %>><%= (typeof prefill !== 'undefined' && prefill) ? (prefill['q_' + i] || '') : '' %></textarea>
+            <% } else { %>
+              <input type="text" id="q_<%= i %>" name="q_<%= i %>" placeholder="<%= q.placeholder || '' %>" value="<%= (typeof prefill !== 'undefined' && prefill) ? (prefill['q_' + i] || '') : '' %>" <%= q.required !== false ? 'required' : '' %> />
+            <% } %>
+          </div>
+        <% }) %>
+
+        <% if (captchaEnabled) { %>
+          <div class="field">
+            <label for="captcha_answer">Quick check: <%= captchaQuestion %></label>
+            <input type="text" id="captcha_answer" name="captcha_answer" required />
+          </div>
+        <% } %>
+
+        <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

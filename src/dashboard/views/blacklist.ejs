@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Blacklist' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Blacklist', pageSub: 'Blocked from tickets, applications, and the web portal' }) %>
+    <div class="content">
+
+      <div class="panel">
+        <h2>Add a user to the blacklist</h2>
+        <form method="post" action="/blacklist/add">
+          <div class="field-row">
+            <div class="field">
+              <label for="user_id">User ID <span class="hint">(right-click a user in Discord → Copy User ID)</span></label>
+              <input type="text" id="user_id" name="user_id" placeholder="e.g. 123456789012345678" required />
+            </div>
+            <div class="field">
+              <label for="reason">Reason</label>
+              <input type="text" id="reason" name="reason" placeholder="Optional" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Blacklist user</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Blacklisted users (<%= entries.length %>)</h2>
+        <table class="ledger">
+          <thead><tr><th>User</th><th>ID</th><th>Reason</th><th>Added by</th><th>Date</th><th></th></tr></thead>
+          <tbody>
+            <% if (entries.length === 0) { %>
+              <tr class="empty-row"><td colspan="6">Nobody is blacklisted.</td></tr>
+            <% } %>
+            <% entries.forEach(e => { %>
+              <tr>
+                <td><span class="stamp stamp-blacklisted">blacklisted</span> <%= e.username %></td>
+                <td class="mono"><%= e.user_id %></td>
+                <td><%= e.reason || '—' %></td>
+                <td><%= e.blacklisted_by || '—' %></td>
+                <td class="mono"><%= new Date(e.created_at).toLocaleString() %></td>
+                <td>
+                  <form class="inline" method="post" action="/blacklist/<%= e.user_id %>/remove">
+                    <button class="btn btn-sm" type="submit">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>Add an IP to the blacklist <span class="hint">(blocks the web application portal only — Discord has no IP data)</span></h2>
+        <form method="post" action="/blacklist/ip/add">
+          <div class="field-row">
+            <div class="field">
+              <label for="ip">IP address</label>
+              <input type="text" id="ip" name="ip" placeholder="e.g. 203.0.113.42" required />
+            </div>
+            <div class="field">
+              <label for="ip_reason">Reason</label>
+              <input type="text" id="ip_reason" name="reason" placeholder="Optional" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Blacklist IP</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Blacklisted IPs (<%= ipEntries.length %>)</h2>
+        <table class="ledger">
+          <thead><tr><th>IP</th><th>Reason</th><th>Added by</th><th>Date</th><th></th></tr></thead>
+          <tbody>
+            <% if (ipEntries.length === 0) { %>
+              <tr class="empty-row"><td colspan="5">No IPs blocked.</td></tr>
+            <% } %>
+            <% ipEntries.forEach(e => { %>
+              <tr>
+                <td class="mono"><%= e.ip %></td>
+                <td><%= e.reason || '—' %></td>
+                <td><%= e.added_by || '—' %></td>
+                <td class="mono"><%= new Date(e.created_at).toLocaleString() %></td>
+                <td>
+                  <form class="inline" method="post" action="/blacklist/ip/<%= e.ip %>/remove">
+                    <button class="btn btn-sm" type="submit">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

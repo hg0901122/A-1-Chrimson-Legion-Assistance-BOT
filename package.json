@@ -1,0 +1,20 @@
+{
+  "name": "discord-ticket-bot",
+  "version": "1.0.0",
+  "description": "Discord bot with tickets, configurable /join applications, a web dashboard, and blacklist system",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "deploy": "node src/bot/deploy-commands.js",
+    "clear-global-commands": "node src/bot/clear-global-commands.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0"
+  }
+}

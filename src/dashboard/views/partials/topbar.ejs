@@ -1,0 +1,12 @@
+<div class="topbar">
+  <div>
+    <h1><%= pageTitle %></h1>
+    <% if (typeof pageSub !== 'undefined' && pageSub) { %><div class="sub"><%= pageSub %></div><% } %>
+  </div>
+  <% if (currentUser) { %>
+  <div class="user-chip">
+    <% if (currentUser.avatar) { %><img src="<%= currentUser.avatar %>" alt="" /><% } %>
+    <span><%= currentUser.username %></span>
+  </div>
+  <% } %>
+</div>

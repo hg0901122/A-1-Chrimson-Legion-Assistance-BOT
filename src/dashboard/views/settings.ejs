@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Settings' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Ticket & Server Settings', pageSub: '20+ settings controlling how tickets, applications, and the portal behave' }) %>
+    <div class="content">
+      <form method="post" action="/settings">
+
+        <div class="panel">
+          <h2>Ticket routing</h2>
+          <div class="field-row">
+            <div class="field">
+              <label for="staff_role_id">Staff role <span class="hint">(auto-added to every ticket + pinged on creation)</span></label>
+              <select id="staff_role_id" name="staff_role_id">
+                <option value="">— None —</option>
+                <% roles.forEach(r => { %>
+                  <option value="<%= r.id %>" <%= cfg.staff_role_id === r.id ? 'selected' : '' %>>@<%= r.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ticket_category_id">Ticket category <span class="hint">(new ticket channels created here)</span></label>
+              <select id="ticket_category_id" name="ticket_category_id">
+                <option value="">— None —</option>
+                <% categories.forEach(c => { %>
+                  <option value="<%= c.id %>" <%= cfg.ticket_category_id === c.id ? 'selected' : '' %>><%= c.name %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ticket_log_channel_id">Ticket log channel</label>
+              <select id="ticket_log_channel_id" name="ticket_log_channel_id">
+                <option value="">— None —</option>
+                <% channels.forEach(c => { %>
+                  <option value="<%= c.id %>" <%= cfg.ticket_log_channel_id === c.id ? 'selected' : '' %>>#<%= c.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="field">
+              <label for="transcript_channel_id">Transcript channel <span class="hint">(falls back to ticket log if empty)</span></label>
+              <select id="transcript_channel_id" name="transcript_channel_id">
+                <option value="">— None —</option>
+                <% channels.forEach(c => { %>
+                  <option value="<%= c.id %>" <%= cfg.transcript_channel_id === c.id ? 'selected' : '' %>>#<%= c.name %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ticket_name_format">Ticket channel name format <span class="hint">({username} is replaced)</span></label>
+              <input type="text" id="ticket_name_format" name="ticket_name_format" value="<%= cfg.ticket_name_format %>" />
+            </div>
+            <div class="field">
+              <label for="max_open_tickets_per_user">Max open tickets per user</label>
+              <input type="number" min="1" id="max_open_tickets_per_user" name="max_open_tickets_per_user" value="<%= cfg.max_open_tickets_per_user %>" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="auto_close_inactive_hours">Auto-close after inactivity (hours) <span class="hint">0 = disabled</span></label>
+              <input type="number" min="0" id="auto_close_inactive_hours" name="auto_close_inactive_hours" value="<%= cfg.auto_close_inactive_hours %>" />
+            </div>
+            <div class="field">
+              <label for="min_account_age_days_ticket">Min. account age to open a ticket (days)</label>
+              <input type="number" min="0" id="min_account_age_days_ticket" name="min_account_age_days_ticket" value="<%= cfg.min_account_age_days_ticket %>" />
+            </div>
+          </div>
+          <div class="checkbox-row" style="margin-bottom:10px;">
+            <input type="checkbox" id="require_reason_on_ticket" name="require_reason_on_ticket" <%= cfg.require_reason_on_ticket ? 'checked' : '' %> />
+            <label for="require_reason_on_ticket" style="margin:0;">Require a reason before opening a ticket</label>
+          </div>
+          <div class="checkbox-row" style="margin-bottom:10px;">
+            <input type="checkbox" id="transcript_enabled" name="transcript_enabled" <%= cfg.transcript_enabled ? 'checked' : '' %> />
+            <label for="transcript_enabled" style="margin:0;">Save a transcript when tickets close</label>
+          </div>
+          <div class="checkbox-row" style="margin-bottom:10px;">
+            <input type="checkbox" id="dm_on_ticket_open" name="dm_on_ticket_open" <%= cfg.dm_on_ticket_open ? 'checked' : '' %> />
+            <label for="dm_on_ticket_open" style="margin:0;">DM the user when their ticket opens</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="dm_on_ticket_close" name="dm_on_ticket_close" <%= cfg.dm_on_ticket_close ? 'checked' : '' %> />
+            <label for="dm_on_ticket_close" style="margin:0;">DM the user when their ticket closes</label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Applications & portal</h2>
+          <div class="field-row">
+            <div class="field">
+              <label for="min_account_age_days_application">Min. account age to apply (days)</label>
+              <input type="number" min="0" id="min_account_age_days_application" name="min_account_age_days_application" value="<%= cfg.min_account_age_days_application %>" />
+            </div>
+            <div class="field">
+              <label for="command_prefix">Custom command prefix</label>
+              <input type="text" id="command_prefix" name="command_prefix" value="<%= cfg.command_prefix %>" maxlength="5" />
+            </div>
+          </div>
+          <div class="checkbox-row" style="margin-bottom:10px;">
+            <input type="checkbox" id="dm_on_application_submit" name="dm_on_application_submit" <%= cfg.dm_on_application_submit ? 'checked' : '' %> />
+            <label for="dm_on_application_submit" style="margin:0;">DM the applicant a confirmation on submit</label>
+          </div>
+          <div class="checkbox-row" style="margin-bottom:10px;">
+            <input type="checkbox" id="captcha_enabled" name="captcha_enabled" <%= cfg.captcha_enabled ? 'checked' : '' %> />
+            <label for="captcha_enabled" style="margin:0;">Show a verification challenge on the web portal <span class="hint">(lightweight bot-check; wire a real reCAPTCHA/hCaptcha key later if you need one)</span></label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="portal_default_enabled" name="portal_default_enabled" <%= cfg.portal_default_enabled ? 'checked' : '' %> />
+            <label for="portal_default_enabled" style="margin:0;">Default new applications to web-portal mode <span class="hint">(each application can still override this individually)</span></label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Branding</h2>
+          <div class="field-row">
+            <div class="field">
+              <label for="embed_color">Embed color <span class="hint">(hex, no #)</span></label>
+              <input type="text" id="embed_color" name="embed_color" value="<%= cfg.embed_color %>" maxlength="6" />
+            </div>
+            <div class="field">
+              <label for="footer_text">Embed footer text</label>
+              <input type="text" id="footer_text" name="footer_text" value="<%= cfg.footer_text %>" maxlength="200" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="welcome_message">Ticket welcome message <span class="hint">({user} is replaced with a mention)</span></label>
+            <input type="text" id="welcome_message" name="welcome_message" value="<%= cfg.welcome_message %>" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save settings</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

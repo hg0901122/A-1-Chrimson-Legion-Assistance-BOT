@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Configure Applications' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Configure Applications', pageSub: 'Every application type, and everything about it' }) %>
+    <div class="content">
+
+      <div class="panel-head" style="margin-bottom:16px;">
+        <div></div>
+        <a href="/applications/config/new" class="btn btn-primary">+ New Application</a>
+      </div>
+
+      <% if (types.length === 0) { %>
+        <div class="panel">
+          <div class="empty-state">
+            <h3>No applications configured</h3>
+            <p>Create one to let members apply with /join.</p>
+          </div>
+        </div>
+      <% } %>
+
+      <% types.forEach(t => { %>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2><%= t.name %> <% if (!t.enabled) { %><span class="badge-pill">disabled</span><% } %></h2>
+              <div class="hint"><%= t.questions.length %> question(s) · <%= t.description || 'No description' %></div>
+            </div>
+            <div class="actions">
+              <a href="/applications/config/<%= t.id %>/edit" class="btn btn-sm">Edit</a>
+              <form class="inline" method="post" action="/applications/config/<%= t.id %>/delete" onsubmit="return confirm('Delete this application type? This does not delete past submissions.');">
+                <button class="btn btn-sm btn-deny" type="submit">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

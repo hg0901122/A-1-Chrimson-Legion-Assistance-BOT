@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: appType ? 'Edit Application' : 'New Application' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: appType ? 'Edit: ' + appType.name : 'New Application', pageSub: 'Configure exactly what this application asks and how it\'s reviewed' }) %>
+    <div class="content">
+
+      <form method="post" action="<%= appType ? '/applications/config/' + appType.id + '/edit' : '/applications/config/new' %>">
+
+        <div class="panel">
+          <h2>Basics</h2>
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" value="<%= appType ? appType.name : '' %>" placeholder="e.g. Staff Application" required />
+          </div>
+          <div class="field">
+            <label for="description">Description <span class="hint">(shown in the /join picker when there's more than one application)</span></label>
+            <input type="text" id="description" name="description" value="<%= appType ? appType.description : '' %>" placeholder="e.g. Apply to join the moderation team" />
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="enabled" name="enabled" <%= (!appType || appType.enabled) ? 'checked' : '' %> />
+            <label for="enabled" style="margin:0;">Open for submissions</label>
+          </div>
+          <div class="checkbox-row" style="margin-top:10px;">
+            <input type="checkbox" id="portal_mode" name="portal_mode" <%= (appType && appType.portal_mode) ? 'checked' : '' %> />
+            <label for="portal_mode" style="margin:0;">Run this application through the web portal instead of Discord modals <span class="hint">(no 5-question limit; applicants sign in with Discord to verify identity, then fill out a full web form)</span></label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Questions</h2>
+            <button type="button" class="btn btn-sm" id="add-question">+ Add question</button>
+          </div>
+          <div class="hint" style="margin-bottom:12px;">
+            Discord modals show 5 fields at a time — with more than 5, applicants get a "Continue" step automatically.
+          </div>
+          <div id="question-list">
+            <% (appType ? appType.questions : []).forEach((q, i) => { %>
+              <%- include('partials/question-row', { q, i }) %>
+            <% }) %>
+          </div>
+          <template id="question-template">
+            <%- include('partials/question-row', { q: { label: '', style: 'short', required: true, placeholder: '' }, i: '__INDEX__' }) %>
+          </template>
+        </div>
+
+        <div class="panel">
+          <h2>Review routing</h2>
+          <div class="field-row">
+            <div class="field">
+              <label for="log_channel_id">Log channel <span class="hint">(where submissions post for review)</span></label>
+              <select id="log_channel_id" name="log_channel_id">
+                <option value="">— None —</option>
+                <% channels.forEach(c => { %>
+                  <option value="<%= c.id %>" <%= appType && appType.log_channel_id === c.id ? 'selected' : '' %>>#<%= c.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="field">
+              <label for="review_ping_role_id">Ping role on submission</label>
+              <select id="review_ping_role_id" name="review_ping_role_id">
+                <option value="">— None —</option>
+                <% roles.forEach(r => { %>
+                  <option value="<%= r.id %>" <%= appType && appType.review_ping_role_id === r.id ? 'selected' : '' %>>@<%= r.name %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="accepted_role_id">Role granted on accept</label>
+              <select id="accepted_role_id" name="accepted_role_id">
+                <option value="">— None —</option>
+                <% roles.forEach(r => { %>
+                  <option value="<%= r.id %>" <%= appType && appType.accepted_role_id === r.id ? 'selected' : '' %>>@<%= r.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="field">
+              <label for="denied_role_id">Role granted on deny</label>
+              <select id="denied_role_id" name="denied_role_id">
+                <option value="">— None —</option>
+                <% roles.forEach(r => { %>
+                  <option value="<%= r.id %>" <%= appType && appType.denied_role_id === r.id ? 'selected' : '' %>>@<%= r.name %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cooldown_hours">Reapply cooldown (hours) <span class="hint">— 0 means no cooldown</span></label>
+            <input type="number" id="cooldown_hours" name="cooldown_hours" min="0" value="<%= appType ? appType.cooldown_hours : 0 %>" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary"><%= appType ? 'Save changes' : 'Create application' %></button>
+          <a href="/applications/config" class="btn">Cancel</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const list = document.getElementById('question-list');
+  const tpl = document.getElementById('question-template');
+
+  function renumber() {
+    list.querySelectorAll('.question-card').forEach((card, i) => {
+      card.querySelector('.q-num').textContent = 'Question ' + (i + 1);
+    });
+  }
+
+  document.getElementById('add-question').addEventListener('click', () => {
+    const clone = tpl.content.cloneNode(true);
+    list.appendChild(clone);
+    renumber();
+  });
+
+  list.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-q')) {
+      e.target.closest('.question-card').remove();
+      renumber();
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Pending Review' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Pending Review', pageSub: pending.length + ' application(s) awaiting a decision' }) %>
+    <div class="content">
+
+      <% if (pending.length === 0) { %>
+        <div class="panel">
+          <div class="empty-state">
+            <h3>Queue is clear</h3>
+            <p>No pending applications right now. New submissions from /join will show up here.</p>
+          </div>
+        </div>
+      <% } %>
+
+      <% pending.forEach(a => { %>
+        <% const t = types[a.application_type_id]; %>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2><%= t ? t.name : 'Unknown application' %> — <span class="mono">#<%= a.id %></span> <span class="badge-pill"><%= a.submitted_via === 'portal' ? 'web portal' : 'discord' %></span></h2>
+              <div class="hint">
+                <%= a.username %> (<span class="mono"><%= a.user_id %></span>) ·
+                Attempt <span class="mono">#<%= a.attempt_number %></span> ·
+                <%= new Date(a.created_at).toLocaleString() %>
+              </div>
+            </div>
+            <div class="actions">
+              <form class="inline" method="post" action="/applications/<%= a.id %>/accept">
+                <button class="btn btn-ok" type="submit">Accept</button>
+              </form>
+              <form class="inline" method="post" action="/applications/<%= a.id %>/deny">
+                <button class="btn btn-deny" type="submit">Deny</button>
+              </form>
+            </div>
+          </div>
+          <dl class="answers-block">
+            <% a.answers.forEach(ans => { %>
+              <dt><%= ans.label %></dt>
+              <dd><%= ans.value %></dd>
+            <% }) %>
+          </dl>
+        </div>
+      <% }) %>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= appType.name %> — Warden</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="portal-body">
+  <div class="portal-shell">
+    <div class="portal-card">
+      <div class="portal-icon">🔐</div>
+      <h1><%= appType.name %></h1>
+      <p class="portal-text">
+        Before you start, we need to confirm this is really you. Sign in with the same Discord
+        account you used to run <code>/join</code>.
+      </p>
+      <a href="<%= loginUrl %>" class="btn btn-primary btn-lg">Sign in with Discord</a>
+    </div>
+  </div>
+</body>
+</html>

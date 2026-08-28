@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: warden-discord-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: CLIENT_ID
+        sync: false
+      - key: CLIENT_SECRET
+        sync: false
+      - key: GUILD_IDS
+        sync: false
+      - key: BOT_MANAGER_IDS
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DASHBOARD_URL
+        sync: false
+      - key: TRUST_PROXY
+        value: "true"
+    disk:
+      name: warden-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Team' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Team & Managers', pageSub: 'Who can access this dashboard, on this server and beyond' }) %>
+    <div class="content">
+
+      <div class="panel">
+        <h2>Add a dashboard member (this server)</h2>
+        <form method="post" action="/team/add">
+          <div class="field-row">
+            <div class="field">
+              <label for="user_id">User ID</label>
+              <input type="text" id="user_id" name="user_id" placeholder="e.g. 123456789012345678" required />
+            </div>
+            <div class="field">
+              <label for="role">Access level</label>
+              <select id="role" name="role">
+                <option value="staff">Staff — review applications & tickets</option>
+                <option value="manager">Manager — full access incl. settings</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Add member</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Dashboard members for this server (<%= staff.length %>)</h2>
+        <div class="hint" style="margin-bottom:12px;">This is on top of anyone with Manage Server permission or a configured staff role in Discord — those always have access too.</div>
+        <table class="ledger">
+          <thead><tr><th>User</th><th>ID</th><th>Level</th><th>Added by</th><th></th></tr></thead>
+          <tbody>
+            <% if (staff.length === 0) { %>
+              <tr class="empty-row"><td colspan="5">No dashboard-only members added yet.</td></tr>
+            <% } %>
+            <% staff.forEach(s => { %>
+              <tr>
+                <td><%= s.username %></td>
+                <td class="mono"><%= s.user_id %></td>
+                <td><span class="badge-pill"><%= s.role %></span></td>
+                <td><%= s.added_by || '—' %></td>
+                <td>
+                  <form class="inline" method="post" action="/team/<%= s.user_id %>/remove">
+                    <button class="btn btn-sm btn-deny" type="submit">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Bot Managers <span class="hint">— beyond owner, in every configured server</span></h2>
+        </div>
+        <form method="post" action="/team/bot-managers/add" style="margin-bottom:18px;">
+          <div class="field-row">
+            <div class="field">
+              <label for="bm_user_id">User ID</label>
+              <input type="text" id="bm_user_id" name="user_id" placeholder="e.g. 123456789012345678" required />
+            </div>
+            <div class="field" style="display:flex; align-items:flex-end;">
+              <button type="submit" class="btn btn-primary">Grant Bot Manager</button>
+            </div>
+          </div>
+        </form>
+        <table class="ledger">
+          <thead><tr><th>User</th><th>ID</th><th>Source</th><th></th></tr></thead>
+          <tbody>
+            <% if (rootManagerIds.length === 0 && botManagers.length === 0) { %>
+              <tr class="empty-row"><td colspan="4">No bot managers configured.</td></tr>
+            <% } %>
+            <% rootManagerIds.forEach(id => { %>
+              <tr>
+                <td>—</td>
+                <td class="mono"><%= id %></td>
+                <td><span class="badge-pill">root (.env)</span></td>
+                <td class="hint">Managed via BOT_MANAGER_IDS</td>
+              </tr>
+            <% }) %>
+            <% botManagers.filter(m => !rootManagerIds.includes(m.user_id)).forEach(m => { %>
+              <tr>
+                <td><%= m.username %></td>
+                <td class="mono"><%= m.user_id %></td>
+                <td><span class="badge-pill">dashboard</span></td>
+                <td>
+                  <form class="inline" method="post" action="/team/bot-managers/<%= m.user_id %>/remove">
+                    <button class="btn btn-sm btn-deny" type="submit">Revoke</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

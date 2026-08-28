@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Ticket Log' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Ticket Log', pageSub: 'Every ticket opened, claimed, and closed' }) %>
+    <div class="content">
+
+      <form class="filters" method="get" action="/tickets">
+        <div class="field">
+          <label for="status">Status</label>
+          <select name="status" id="status" onchange="this.form.submit()">
+            <option value="">All</option>
+            <option value="open" <%= filterStatus === 'open' ? 'selected' : '' %>>Open</option>
+            <option value="closed" <%= filterStatus === 'closed' ? 'selected' : '' %>>Closed</option>
+          </select>
+        </div>
+      </form>
+
+      <div class="panel">
+        <table class="ledger">
+          <thead><tr><th>ID</th><th>Opened by</th><th>Status</th><th>Claimed by</th><th>Closed by</th><th>Opened</th><th>Closed</th><th></th></tr></thead>
+          <tbody>
+            <% if (tickets.length === 0) { %>
+              <tr class="empty-row"><td colspan="8">No tickets match these filters.</td></tr>
+            <% } %>
+            <% tickets.forEach(t => { %>
+              <tr>
+                <td class="mono">#<%= t.id %></td>
+                <td><%= t.username %></td>
+                <td><span class="stamp stamp-<%= t.status %>"><%= t.status %></span></td>
+                <td><%= t.claimed_by ? t.claimed_by : '—' %></td>
+                <td><%= t.closed_by ? t.closed_by : '—' %></td>
+                <td class="mono"><%= new Date(t.created_at).toLocaleString() %></td>
+                <td class="mono"><%= t.closed_at ? new Date(t.closed_at).toLocaleString() : '—' %></td>
+                <td><% if (t.status === 'closed') { %><a href="/tickets/<%= t.id %>/transcript" class="btn btn-sm">Transcript</a><% } %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

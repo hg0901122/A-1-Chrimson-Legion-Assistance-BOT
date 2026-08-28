@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Overview' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Overview', pageSub: 'Live status of applications, tickets, and access control' }) %>
+    <div class="content">
+
+      <div class="grid">
+        <div class="stat-card accent-pending">
+          <div class="num"><%= stats.pendingApplications %></div>
+          <div class="label">Pending Applications</div>
+        </div>
+        <div class="stat-card">
+          <div class="num"><%= stats.openTickets %></div>
+          <div class="label">Open Tickets</div>
+        </div>
+        <div class="stat-card accent-deny">
+          <div class="num"><%= stats.blacklisted %></div>
+          <div class="label">Blacklisted Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="num"><%= stats.applicationTypes %></div>
+          <div class="label">Application Types</div>
+        </div>
+        <div class="stat-card accent-ok">
+          <div class="num"><%= stats.accepted %></div>
+          <div class="label">Accepted (all time)</div>
+        </div>
+        <div class="stat-card accent-deny">
+          <div class="num"><%= stats.denied %></div>
+          <div class="label">Denied (all time)</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Recent Applications</h2>
+          <a href="/applications/log" class="btn btn-sm">View full log →</a>
+        </div>
+        <table class="ledger">
+          <thead><tr><th>ID</th><th>Applicant</th><th>Attempt</th><th>Status</th><th>Submitted</th></tr></thead>
+          <tbody>
+            <% if (recentApplications.length === 0) { %>
+              <tr class="empty-row"><td colspan="5">No applications yet.</td></tr>
+            <% } %>
+            <% recentApplications.forEach(a => { %>
+              <tr>
+                <td class="mono">#<%= a.id %></td>
+                <td><%= a.username %></td>
+                <td class="mono">#<%= a.attempt_number %></td>
+                <td><span class="stamp stamp-<%= a.status %>"><%= a.status %></span></td>
+                <td class="mono"><%= new Date(a.created_at).toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Recent Tickets</h2>
+          <a href="/tickets" class="btn btn-sm">View ticket log →</a>
+        </div>
+        <table class="ledger">
+          <thead><tr><th>ID</th><th>Opened by</th><th>Status</th><th>Claimed by</th><th>Opened</th></tr></thead>
+          <tbody>
+            <% if (recentTickets.length === 0) { %>
+              <tr class="empty-row"><td colspan="5">No tickets yet.</td></tr>
+            <% } %>
+            <% recentTickets.forEach(t => { %>
+              <tr>
+                <td class="mono">#<%= t.id %></td>
+                <td><%= t.username %></td>
+                <td><span class="stamp stamp-<%= t.status %>"><%= t.status %></span></td>
+                <td><%= t.claimed_by ? '<@' + t.claimed_by + '>' : '—' %></td>
+                <td class="mono"><%= new Date(t.created_at).toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

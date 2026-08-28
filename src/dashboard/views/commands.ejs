@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head', { title: 'Custom Commands' }) %></head>
+<body>
+<div class="shell">
+  <%- include('partials/nav') %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Custom Commands', pageSub: 'Text triggers the bot replies to, prefix "' + prefix + '"' }) %>
+    <div class="content">
+
+      <div class="panel">
+        <h2>Add a command</h2>
+        <form method="post" action="/commands/add">
+          <div class="field">
+            <label for="trigger">Trigger <span class="hint">(without the prefix, e.g. "rules")</span></label>
+            <input type="text" id="trigger" name="trigger" placeholder="rules" required />
+          </div>
+          <div class="field">
+            <label for="response">Response</label>
+            <textarea id="response" name="response" rows="3" placeholder="What the bot replies with" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add command</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Commands (<%= commands.length %>)</h2>
+        <table class="ledger">
+          <thead><tr><th>Trigger</th><th>Response</th><th>Added by</th><th></th></tr></thead>
+          <tbody>
+            <% if (commands.length === 0) { %>
+              <tr class="empty-row"><td colspan="4">No custom commands yet.</td></tr>
+            <% } %>
+            <% commands.forEach(c => { %>
+              <tr>
+                <td class="mono"><%= prefix %><%= c.trigger %></td>
+                <td><%= c.response %></td>
+                <td><%= c.created_by || '—' %></td>
+                <td>
+                  <form class="inline" method="post" action="/commands/<%= c.id %>/delete">
+                    <button class="btn btn-sm btn-deny" type="submit">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
