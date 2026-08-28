@@ -5,18 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= appType.name %> — Warden</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <!-- Load Google's Script -->
+  <script src="https://google.com" async defer></script>
 </head>
 <body class="portal-body">
-  <div class="portal-shell">
+  <div class="portal-shell"> 
     <div class="portal-card">
       <div class="portal-icon">🔐</div>
       <h1><%= appType.name %></h1>
       <p class="portal-text">
-        Before you start, we need to confirm this is really you. Sign in with the same Discord
+        Before you start, we need to confirm this is really you. Sign in with the
         account you used to run <code>/join</code>.
       </p>
+      
+      <!-- Display the Checkbox Box -->
+      <div class="g-recaptcha" data-sitekey="6Lelv50tAAAAAClnF1_4fNUNef-JZCHscCVMYvtG" style="margin-bottom: 15px; display: flex; justify-content: center;"></div>
+
       <a href="<%= loginUrl %>" class="btn btn-primary btn-lg">Sign in with Discord</a>
     </div>
-  </div>
-</body>
+  </div>  
+</body> 
 </html>
+
