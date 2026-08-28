@@ -44,7 +44,11 @@ module.exports = {
         .setStyle(ButtonStyle.Primary)
     );
 
+    // Reply first, then post the panel — posting is the slower of the two
+    // operations, and doing it after the reply avoids the 3-second
+    // interaction window expiring ("Unknown interaction", code 10062).
+    await interaction.reply({ content: "Posting panel...", ephemeral: true });
     await interaction.channel.send({ embeds: [embed], components: [row] });
-    await interaction.reply({ content: "Panel posted.", ephemeral: true });
+    await interaction.editReply({ content: "Panel posted." });
   },
 };

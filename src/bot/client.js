@@ -31,6 +31,13 @@ function createBotClient() {
   client.on("interactionCreate", interactionCreate);
   client.on("messageCreate", messageCreate);
 
+  // Safety net: a failed REST call or stray promise rejection anywhere in the
+  // bot should never take down the whole process (which also runs the
+  // dashboard). Log it and keep going instead.
+  client.on("error", (err) => console.error("Discord client error:", err));
+  client.on("shardError", (err) => console.error("Discord shard error:", err));
+  process.on("unhandledRejection", (err) => console.error("Unhandled rejection:", err));
+
   return client;
 }
 
