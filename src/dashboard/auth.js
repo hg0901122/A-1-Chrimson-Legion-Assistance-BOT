@@ -8,7 +8,7 @@ const DISCORD_API = "https://discord.com";
 function buildAuthUrl(state) {
   const params = new URLSearchParams({
     client_id: process.env.CLIENT_ID,
-    redirect_uri: "https://railway.app",
+    redirect_uri: "https://warden-discord-bot-production.up.railway.app",
     response_type: "code",
     scope: "identify",
     prompt: "consent",
@@ -23,7 +23,7 @@ async function exchangeCode(code) {
     client_secret: process.env.CLIENT_SECRET,
     grant_type: "authorization_code",
     code,
-    redirect_uri: "https://railway.app",
+    redirect_uri: "https://warden-discord-bot-production.up.railway.app",
   });
 
   const res = await fetch(`${DISCORD_API}/oauth2/token`, {
