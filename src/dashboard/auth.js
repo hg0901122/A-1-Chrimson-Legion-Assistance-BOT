@@ -1,11 +1,9 @@
 const { getAccessLevel } = require("../shared/permissions");
 
-const DISCORD_API = "https://discord.com/api/v10";
+const DISCORD_API = "https://discord.com";
 
 /**
- * Builds the Discord OAuth2 authorize URL. `state` round-trips through Discord
- * unmodified — used to tell /auth/callback whether this is a staff dashboard
- * login or an applicant verifying their identity for the web portal.
+ * Builds the Discord OAuth2 authorize URL.
  */
 function buildAuthUrl(state) {
   const params = new URLSearchParams({
@@ -45,13 +43,11 @@ async function fetchDiscordUser(accessToken) {
   return res.json();
 }
 
-/** Dashboard access gate: any access level (staff or manager) can log in; routes below further restrict by level. */
 function requireAuth(req, res, next) {
   if (req.session.user) return next();
   res.redirect("/auth/login");
 }
 
-/** Route-level gate for manager-only pages (settings, config, team, custom commands). */
 function requireManager(req, res, next) {
   if (req.session.user && req.session.accessLevel === "manager") return next();
   res.status(403).send("This page requires Manager-level access.");
