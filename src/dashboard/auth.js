@@ -10,7 +10,7 @@ const DISCORD_API = "https://discord.com/api/v10";
 function buildAuthUrl(state) {
   const params = new URLSearchParams({
     client_id: process.env.CLIENT_ID,
-    redirect_uri: `${process.env.DASHBOARD_URL}/auth/callback`,
+    redirect_uri: "https://railway.app",
     response_type: "code",
     scope: "identify",
     prompt: "consent",
@@ -25,7 +25,7 @@ async function exchangeCode(code) {
     client_secret: process.env.CLIENT_SECRET,
     grant_type: "authorization_code",
     code,
-    redirect_uri: `${process.env.DASHBOARD_URL}/auth/callback`,
+    redirect_uri: "https://railway.app",
   });
 
   const res = await fetch(`${DISCORD_API}/oauth2/token`, {
